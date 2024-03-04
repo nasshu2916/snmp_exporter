@@ -58,6 +58,7 @@ INFRAPOWER_URL    := https://www.austin-hughes.com/wp-content/uploads/2021/05/IP
 LIEBERT_URL       := https://www.vertiv.com/globalassets/documents/software/monitoring/lgpmib-win_rev16_299461_0.zip
 READYNAS_URL      := https://www.downloads.netgear.com/files/ReadyNAS/READYNAS-MIB.txt
 READYDATAOS_URL   := https://www.circitor.fr/Mibs/Mib/R/READYDATAOS-MIB.mib
+YAMAHA_URL        := 'http://www.rtpro.yamaha.co.jp/RT/docs/mib/yamaha-private-mib.zip'
 
 CYBERPOWER_VERSION := 2.11
 CYBERPOWER_URL     := https://dl4jz3rbrsfum.cloudfront.net/software/CyberPower_MIB_v$(CYBERPOWER_VERSION).MIB.zip
@@ -79,6 +80,7 @@ clean:
 		$(MIBDIR)/.paloalto_panos \
 		$(MIBDIR)/.synology \
 		$(MIBDIR)/.kemp-lm \
+		$(MIBDIR)/.yamaha
 		$(MIBDIR)/readynas \
 		$(MIBDIR)/readydataos
 
@@ -148,7 +150,8 @@ mibs: \
   $(MIBDIR)/LIEBERT_GP_PDU.MIB \
   $(MIBDIR)/CyberPower.MIB \
   $(MIBDIR)/EAP.MIB \
-  $(MIBDIR)/EAP-Client.MIB
+  $(MIBDIR)/EAP-Client.MIB \
+  $(MIBDIR)/.yamaha
 
 $(MIBDIR)/apc-powernet-mib:
 	@echo ">> Downloading apc-powernet-mib"
@@ -367,3 +370,11 @@ $(MIBDIR)/readynas:
 $(MIBDIR)/readydataos:
 	@echo ">> Downloading readydataos"
 	@curl $(CURL_OPTS) -o $(MIBDIR)/readydataos "$(READYDATAOS_URL)"
+
+$(MIBDIR)/.yamaha:
+				$(eval TMP := $(shell mktemp))
+				@echo ">> Downloading yamaha"
+				@curl $(CURL_OPTS) -o $(TMP) $(YAMAHA_URL)
+				@unzip -j -d $(MIBDIR) $(TMP)
+				@rm -v $(TMP)
+				@touch $(MIBDIR)/.yamaha
